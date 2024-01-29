@@ -13,4 +13,4 @@ You can use this project to detect sound over some level
 4. Install Libraries
     * `pip install -r requirements.txt`
 # Running
-run `py s.py` on windows, or `python s.py` on linux
+Run `py s.py` on windows, or `python s.py` on linux
