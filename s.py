@@ -1,29 +1,54 @@
 import sounddevice as sd
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+
+def populate_array(starting_array, desired_length, value_to_add=0):
+    result_array = starting_array.copy()
+    while len(result_array) < desired_length:
+        result_array = np.append(result_array, value_to_add)
+    return result_array[:desired_length]
 
 def callback(indata, frames, time, status):
-    global prev_volume_norm
+    global prev_volume_norm, time_values, volume_values, ax
 
-    volume_norm = np.linalg.norm(indata) * 10  # Adjust the multiplier for sensitivity
+    volume_norm = np.linalg.norm(indata) * 10
 
     if abs(volume_norm - prev_volume_norm) > sensitivity:
-        # Perform your desired action here, for example print a message
         print(f"Sound level changed!  {volume_norm}")
     else:
         print(f"                      {volume_norm}")
 
     prev_volume_norm = volume_norm
 
+<<<<<<< HEAD
 # Set your desired sensitivity (adjust based on your environment)
 sensitivity = 1
+=======
+    # Ensure time_values only contains numeric values
+    if isinstance(time, (int, float)):
+        time_values.append(time)
+    else:
+        time_values.append(0)  # Provide a default value if time is not numeric
+>>>>>>> 1bb2191ec6e1217e98c1ca29e49084cd81f65c72
 
-# Set the sampling parameters
-sample_rate = 44100  # typical audio sampling rate
+    volume_values.append(volume_norm)
 
-# Initialize previous volume level
+    # Update the x-axis limits to create a scrolling effect
+    if time_values:
+        ax.set_xlim(max(0, time_values[-window_size]), max(time_values) + 1)
+
+    # Plot the difference graph
+    ax.clear()
+    ax.plot(time_values, populate_array(np.diff(volume_values), len(time_values), 0), color='b', marker='o')
+    ax.set_xlabel('Time (s)')
+    ax.set_ylabel('Volume Difference')
+    ax.set_title('Sound Level Difference Over Time')
+
+sensitivity = 1.5
+sample_rate = 44100
 prev_volume_norm = 0
 
-# Start recording with the callback function
 with sd.InputStream(callback=callback, channels=1, samplerate=sample_rate):
-    while True:
-        sd.sleep(100)  # Sleep for a very long time (adjust as needed)
+    ani = FuncAnimation(fig, callback, fargs=(None, None, None), interval=100, blit=False)
+    plt.show()
