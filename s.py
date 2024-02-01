@@ -15,7 +15,7 @@ def callback(indata, frames, time, status):
     prev_volume_norm = volume_norm
 
 # Set your desired sensitivity (adjust based on your environment)
-sensitivity = .1
+sensitivity = 1
 
 # Set the sampling parameters
 sample_rate = 44100  # typical audio sampling rate
